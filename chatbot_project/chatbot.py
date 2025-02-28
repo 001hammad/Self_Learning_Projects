@@ -78,10 +78,13 @@ st.markdown("""
             background-color: #81C784;
             transform: scale(1.05);
         }
+
+        /* Mobile Specific Styling */
+        @media only screen and (max-width: 768px) {
+            .send-btn { display: block !important; }
+        }
     </style>
 """, unsafe_allow_html=True)
-
-
 
 #  UI Setup
 st.title("🤖 Hammad’s AI | Smart Conversations Start Here")
@@ -95,22 +98,22 @@ def get_response(prompt):
     try:
         model = genai.GenerativeModel("gemini-1.5-flash")
         response = model.generate_content(prompt)
-        time.sleep(2)
+        time.sleep(1)
         return response.text
     except Exception as e:
         return f"❌ Error: {str(e)}"
 
-# 🔥 Function to Handle Enter Key Press
+# 🔥 Function to Handle Input
 def handle_input():
     user_input = st.session_state.user_message
     if user_input:
-        # User Message Store Karna
         st.session_state.messages.append({"role": "user", "content": user_input})
+        
         # ✅ Thinking Indicator Show Karna
-    with st.empty():
-        for i in range(3):
-            st.write("🤖 Thinking" + "." +"." * i)  # "Thinking." → "Thinking.." → "Thinking..."
-            time.sleep(0.5)  # Har dot ke beech delay
+        with st.empty():
+            for i in range(3):
+                st.write("🤖 Thinking" + "." * (i+1))
+                time.sleep(0.5)
 
         # AI Response Fetch Karna
         response = get_response(user_input)
@@ -121,13 +124,22 @@ def handle_input():
         # Input Box Clear Karna
         st.session_state.user_message = ""
 
-#  User Input Field (Jab Enter Press Karega, Message Send Ho Jayega)
-st.text_input("💬 Write something:", key="user_message", on_change=handle_input)
+#  User Input Field (Enter Key Pe Message Send Hoga)
+col1, col2 = st.columns([4, 1])
+with col1:
+    st.text_input("💬 Write something:", key="user_message", on_change=handle_input)
 
+# ✅ Mobile Ke Liye Send Button
+with col2:
+    if st.button("📩 Send", key="send_btn"):
+        handle_input()
+
+#  Clear Chat Button
 if st.button("🔄 Clear Chat"):
     st.session_state.messages = []
 
-
+#  Chat Messages Display Karna
+st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
 for msg in st.session_state.messages:
     if msg["role"] == "user":
         st.markdown(f"<div class='user-message'>🧑‍💻 {msg['content']}</div>", unsafe_allow_html=True)
