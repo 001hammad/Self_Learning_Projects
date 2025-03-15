@@ -2,18 +2,6 @@ import streamlit as st
 import datetime
 import time
 import os
-from playsound import playsound
-
-# ✅ Function to play alarm sound
-def play_alarm():
-    alarm_file = "alarm.mp3"
-    if os.path.exists(alarm_file):
-        try:
-            playsound(alarm_file)  # 🔥 Works on Streamlit Cloud
-        except Exception as e:
-            st.error(f"⚠️ Sound error: {e}")
-    else:
-        st.error("❌ Alarm sound file not found!")
 
 # 🌟 Streamlit UI Config
 st.set_page_config(page_title="Alarm Clock", page_icon="⏰", layout="centered")
@@ -26,6 +14,13 @@ st.markdown(
             background: linear-gradient(to right, #141E30, #243B55);
             color: white;
             font-family: Arial, sans-serif;
+        }
+        .clock-container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.3);
         }
         h1 {
             font-size: 50px;
@@ -86,7 +81,14 @@ if set_alarm:
             
             if current_time == alarm_time:
                 st.warning("⏰ Time's up! Wake up! 🔔")
-                play_alarm()
+
+                # ✅ **Auto-Play Sound in Streamlit**
+                audio_file = "alarm.mp3"  # Ensure this file exists in your project
+                if os.path.exists(audio_file):
+                    st.audio(audio_file, format="audio/mp3", autoplay=True)
+                else:
+                    st.error("❌ Alarm sound file not found!")
+
                 break
 
             time.sleep(1)  # Wait 1 second before updating
