@@ -2,6 +2,7 @@ import streamlit as st
 import datetime
 import time
 import os
+import base64
 
 # 🌟 Streamlit UI Config
 st.set_page_config(page_title="Alarm Clock", page_icon="⏰", layout="centered")
@@ -68,6 +69,19 @@ col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     set_alarm = st.button("🔔 Set Alarm", use_container_width=True)
 
+# ✅ Function to Auto-Play Sound
+def autoplay_audio(file_path: str):
+    """Plays an audio file automatically in Streamlit"""
+    with open(file_path, "rb") as audio_file:
+        audio_bytes = audio_file.read()
+        encoded_audio = base64.b64encode(audio_bytes).decode()
+        autoplay_html = f"""
+            <audio autoplay>
+                <source src="data:audio/mp3;base64,{encoded_audio}" type="audio/mp3">
+            </audio>
+        """
+        st.markdown(autoplay_html, unsafe_allow_html=True)
+
 if set_alarm:
     try:
         # ✅ Validate time format
@@ -82,10 +96,10 @@ if set_alarm:
             if current_time == alarm_time:
                 st.warning("⏰ Time's up! Wake up! 🔔")
 
-                # ✅ **Auto-Play Sound in Streamlit**
+                # ✅ **Auto-Play Sound**
                 audio_file = "alarm.mp3"  # Ensure this file exists in your project
                 if os.path.exists(audio_file):
-                    st.audio(audio_file, format="audio/mp3", autoplay=True)
+                    autoplay_audio(audio_file)  # ✅ FIXED: Sound will now auto-play in Streamlit!
                 else:
                     st.error("❌ Alarm sound file not found!")
 
