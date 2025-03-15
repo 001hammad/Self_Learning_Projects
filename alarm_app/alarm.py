@@ -1,18 +1,17 @@
 import streamlit as st
 import datetime
 import time
-import pygame
 import os
-
-# 🎵 Initialize pygame mixer
-pygame.mixer.init()
+from playsound import playsound
 
 # ✅ Function to play alarm sound
 def play_alarm():
     alarm_file = "alarm.mp3"
     if os.path.exists(alarm_file):
-        pygame.mixer.music.load(alarm_file)
-        pygame.mixer.music.play()
+        try:
+            playsound(alarm_file)  # 🔥 Works on Streamlit Cloud
+        except Exception as e:
+            st.error(f"⚠️ Sound error: {e}")
     else:
         st.error("❌ Alarm sound file not found!")
 
@@ -28,20 +27,17 @@ st.markdown(
             color: white;
             font-family: Arial, sans-serif;
         }
-        
         h1 {
             font-size: 50px;
             font-weight: bold;
             text-shadow: 3px 3px 5px rgba(255, 255, 255, 0.3);
         }
-
         .live-clock {
             font-size: 28px;
             font-weight: bold;
             color: #ffcc00;
             text-shadow: 2px 2px 4px black;
         }
-
         .stButton>button {
             background: linear-gradient(to right, #ff8000, #ffcc00);
             color: black;
@@ -52,7 +48,6 @@ st.markdown(
             box-shadow: 0px 5px 10px rgba(255, 255, 255, 0.3);
             transition: 0.3s ease-in-out;
         }
-        
         .stButton>button:hover {
             transform: scale(1.1);
             background: linear-gradient(to right, #ffcc00, #ff8000);
@@ -64,7 +59,6 @@ st.markdown(
 
 # ✅ UI Content Inside a Styled Box
 st.markdown("<div class='clock-container'>", unsafe_allow_html=True)
-
 st.markdown("<h1>⏰ Digital Alarm Clock</h1>", unsafe_allow_html=True)
 st.markdown("<h3>Never miss an important moment!</h3>", unsafe_allow_html=True)
 
